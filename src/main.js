@@ -518,8 +518,6 @@ const presenter = createPresenter({
   onModeChange() {
     const story = document.body.classList.contains('mode-story');
     controls.minDistance = story ? 2.5 : 7;
-    // The camera is guided during the presentation; touch swipes change slides.
-    controls.enableRotate = controls.enableZoom = controls.enablePan = !story;
     ui.card.hidden = true;
     ui.you.hidden = true;
     ui.alexa.hidden = true;
@@ -534,4 +532,5 @@ setupOffline();
 
 // Small hook for automated checks.
 window.__casa = { rooms, robot, devices, runOrder, voice, goTo, presenter };
+window.__casaCam = () => camera.position.toArray().map((n) => n.toFixed(2)).join(',');
 frame();

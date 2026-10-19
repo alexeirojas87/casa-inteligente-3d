@@ -110,7 +110,7 @@ export function createPresenter(ctx) {
   function renderCover(step) {
     cover.innerHTML = step.thanks
       ? `<p class="cover-eyebrow">La Informática en el Hogar</p><h1>¡Gracias!</h1><p class="cover-crew">${CREW}</p><p class="cover-grade">6to A</p>`
-      : `<p class="cover-eyebrow">Proyecto escolar · 6to A</p><h1>La Informática <span>en el Hogar</span></h1><p class="cover-crew">${CREW}</p><p class="cover-hint">Presiona → o desliza para empezar</p>`;
+      : `<p class="cover-eyebrow">Proyecto escolar · 6to A</p><h1>La Informática <span>en el Hogar</span></h1><p class="cover-crew">${CREW}</p><p class="cover-hint">Presiona → para empezar</p>`;
     cover.classList.remove('is-in');
     void cover.offsetWidth;
     cover.classList.add('is-in');
@@ -162,18 +162,19 @@ export function createPresenter(ctx) {
     if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); prev(); }
   }, true);
 
-  // Swipe left / right on the house to change slides (iPad).
+  // Swipe left / right on the text card to change slides (iPad). Dragging on
+  // the house keeps rotating the map.
   let swipe = null;
-  window.addEventListener('pointerdown', (e) => {
-    if (!body.classList.contains('mode-story') || e.target.closest('button, .ring, .story-card')) { swipe = null; return; }
-    swipe = { x: e.clientX, y: e.clientY };
-  });
-  window.addEventListener('pointerup', (e) => {
+  card.addEventListener('touchstart', (e) => {
+    if (e.touches.length !== 1 || e.target.closest('button')) { swipe = null; return; }
+    swipe = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+  }, { passive: true });
+  card.addEventListener('touchend', (e) => {
     if (!swipe) return;
-    const dx = e.clientX - swipe.x;
-    const dy = e.clientY - swipe.y;
+    const dx = e.changedTouches[0].clientX - swipe.x;
+    const dy = e.changedTouches[0].clientY - swipe.y;
     swipe = null;
-    if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+    if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
     if (dx < 0) next(); else prev();
   });
 

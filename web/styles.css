@@ -384,3 +384,4 @@ body { -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user
   .rotate p { margin: 0; font: 800 30px/1.2 var(--display); color: var(--paper); }
   .rotate p::before { content: '⟳'; display: block; font-size: 64px; color: var(--alexa); }
 }
+.story-card { touch-action: pan-y; }
