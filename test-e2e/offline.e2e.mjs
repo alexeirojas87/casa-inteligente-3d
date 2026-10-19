@@ -2,6 +2,7 @@
 // 1) first visit saves everything, 2) the server is stopped and the browser goes
 // offline, 3) after reloading, the voice still recognizes an order and Alexa answers
 // with her recorded voice. Usage: node test-e2e/offline.e2e.mjs <clip.wav> <profileDir>
+// BASE=https://... tests the published site instead of a local server.
 import puppeteer from 'puppeteer-core';
 import { spawn } from 'node:child_process';
 import { resolve } from 'node:path';
@@ -23,7 +24,7 @@ const errors = [];
 try {
   const page = await browser.newPage();
   page.on('pageerror', (e) => errors.push(e.message));
-  await page.goto(`http://127.0.0.1:${PORT}/index.html#demo`);
+  await page.goto(`${process.env.BASE ?? `http://127.0.0.1:${PORT}/`}index.html#demo`);
   await page.waitForFunction(() => document.querySelector('#offline').dataset.state === 'ready', { timeout: 180000 });
   console.log('saved:', await page.$eval('#offline', (e) => e.textContent));
   await page.waitForFunction(() => document.querySelector('#voice-status').dataset.state === 'ready', { timeout: 120000 });

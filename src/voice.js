@@ -1,7 +1,9 @@
 // Offline speech recognition with Vosk (runs inside the browser, no internet).
 // The global `Vosk` comes from vosk.js, loaded with a classic <script> tag.
 
-const MODEL_URL = 'model/vosk-es.tar.gz';
+// Absolute URL: the voice worker runs from a blob: URL and would resolve a
+// relative path against the site root instead of this folder.
+const MODEL_URL = new URL('model/vosk-es.tar.gz', location.href.split('#')[0]).href;
 
 export function createVoice({ grammar, onPartial, onResult, onStatus }) {
   let model = null;
