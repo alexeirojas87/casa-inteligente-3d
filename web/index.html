@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#16163a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Casa inteligente" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="icons/icon-180.png" />
+  <title>Nuestra casa inteligente</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Ccircle cx=%2216%22 cy=%2216%22 r=%2212%22 fill=%22none%22 stroke=%22%232fd6ff%22 stroke-width=%225%22/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="stage" aria-label="Maqueta 3D de la casa. Arrastra para girar, rueda para acercar."></div>
+
+  <header class="brand">
+    <p class="eyebrow">La Informática en el Hogar · 6to A</p>
+    <h1>Nuestra casa <span>inteligente</span></h1>
+    <p class="crew">Thailis · Alessandro · Jesus · Dyan · Abigail</p>
+  </header>
+
+  <ol class="flow" aria-label="Cómo viaja una orden">
+    <li><b>Tú hablas</b><span>Alexa escucha tu voz</span></li>
+    <li><b>Alexa entiende</b><span>Convierte la voz en una orden</span></li>
+    <li><b>El WiFi la lleva</b><span>La orden viaja por el router</span></li>
+    <li><b>El aparato obedece</b><span>Su chip sigue la instrucción</span></li>
+  </ol>
+
+  <nav class="toolbar" aria-label="Vista">
+    <button id="toggle-wifi" class="pill" aria-pressed="false">Ver WiFi</button>
+    <button id="toggle-day" class="pill" aria-pressed="false">Día</button>
+    <button id="toggle-view" class="pill">Ver desde arriba</button>
+  </nav>
+
+  <aside id="orders" class="orders">
+    <button id="toggle-orders" class="orders-toggle" aria-expanded="true" aria-controls="orders-list">Órdenes</button>
+    <div id="orders-list" class="orders-list">
+      <section>
+        <h2>Luces</h2>
+        <button data-say="Alexa, enciende la luz de la sala">Enciende la luz de la sala</button>
+        <button data-say="Alexa, apaga la luz del cuarto de los niños">Apaga la luz del cuarto de los niños</button>
+        <button data-say="Alexa, pon la luz de la sala en morado">Pon la luz de la sala en morado</button>
+        <button data-say="Alexa, pon la luz del cuarto de los niños en azul">Pon la luz del cuarto de los niños en azul</button>
+        <button data-say="Alexa, apaga todas las luces">Apaga todas las luces</button>
+        <button data-say="Alexa, enciende todas las luces">Enciende todas las luces</button>
+      </section>
+      <section>
+        <h2>Robot aspiradora</h2>
+        <button data-say="Alexa, manda el robot a limpiar la cocina">Limpia la cocina</button>
+        <button data-say="Alexa, manda el robot a limpiar el cuarto de los niños">Limpia el cuarto de los niños</button>
+        <button data-say="Alexa, manda el robot a limpiar la sala">Limpia la sala</button>
+        <button data-say="Alexa, manda el robot al baño">Manda el robot al baño</button>
+        <button data-say="Alexa, el robot vuelve a la base">Vuelve a la base</button>
+      </section>
+      <section>
+        <h2>Aparatos</h2>
+        <button data-say="Alexa, enciende la tele">Enciende la tele</button>
+        <button data-say="Alexa, apaga la tele">Apaga la tele</button>
+        <button data-say="Alexa, enciende la lavadora">Enciende la lavadora</button>
+        <button data-say="Alexa, enciende el aire acondicionado">Enciende el aire acondicionado</button>
+        <button data-say="Alexa, apaga el aire acondicionado">Apaga el aire acondicionado</button>
+      </section>
+      <section>
+        <h2>Preguntas</h2>
+        <button data-say="Alexa, ¿tú piensas?">¿Tú piensas?</button>
+        <button data-say="Alexa, ¿cómo funcionas?">¿Cómo funcionas?</button>
+        <button data-say="Alexa, buenas noches">Buenas noches</button>
+      </section>
+      <section class="orders-sensors">
+        <h2>Baño <small>sensores, sin Alexa</small></h2>
+        <button data-act="motion">Alguien entra al baño</button>
+        <button data-act="flush">Pasar la mano por el sensor</button>
+        <button data-act="fridge">Abrir o cerrar la heladera</button>
+      </section>
+    </div>
+  </aside>
+
+  <section class="talk" aria-live="polite">
+    <div id="bubble-you" class="bubble bubble--you" hidden><b>Tú</b><p></p></div>
+    <div class="ring-wrap">
+      <button id="alexa-ring" class="ring" data-state="idle" aria-label="Mantén presionado para hablar con Alexa">
+        <span class="ring-light" aria-hidden="true"></span>
+        <span class="ring-core">Alexa</span>
+      </button>
+      <p id="ring-hint" class="ring-hint">Mientras tanto, prueba los botones de órdenes</p>
+      <div class="voice-row">
+        <span id="voice-status" class="voice-status" data-state="loading">Preparando el oído de Alexa…</span>
+        <label class="switch"><input id="handsfree" type="checkbox" disabled /> Manos libres</label>
+      </div>
+    </div>
+    <div id="bubble-alexa" class="bubble bubble--alexa" hidden><b>Alexa</b><p></p></div>
+  </section>
+
+  <article id="info-card" class="info-card" hidden>
+    <button id="info-close" class="info-close" aria-label="Cerrar">×</button>
+    <h3></h3>
+    <p class="card-body"></p>
+    <p class="card-fact"></p>
+    <button class="card-action pill"></button>
+  </article>
+
+  <section id="story" class="story" aria-live="polite">
+    <div class="story-cover" hidden></div>
+    <article class="story-card" hidden></article>
+    <nav class="story-nav" aria-label="Presentación">
+      <button type="button" class="story-prev" aria-label="Anterior">←</button>
+      <div class="story-dots"></div>
+      <button type="button" class="story-next" aria-label="Siguiente">→</button>
+    </nav>
+  </section>
+  <button id="story-resume" class="story-resume pill" type="button">Continuar presentación →</button>
+
+  <p id="offline" class="offline" hidden></p>
+  <div id="rotate" class="rotate" aria-hidden="true"><p>Gira el iPad para ver la casa completa</p></div>
+
+  <div id="file-warning" class="file-warning" role="alert" hidden>
+    <h2>Así Alexa no puede escuchar</h2>
+    <p>Abriste <b>index.html</b> directamente y Chrome no deja usar el micrófono de esta forma.</p>
+    <ol>
+      <li>Cierra esta ventana de Chrome.</li>
+      <li>En la carpeta <b>CasaInteligente</b>, haz doble clic en <b>«Abrir Casa Inteligente»</b>.</li>
+    </ol>
+    <button class="pill" onclick="this.parentElement.hidden = true">Seguir sin voz (solo botones)</button>
+  </div>
+
+  <div id="toasts" class="toasts" aria-live="polite"></div>
+
+  <script src="vosk.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

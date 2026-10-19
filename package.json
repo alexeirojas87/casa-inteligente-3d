@@ -1,0 +1,27 @@
+{
+  "name": "casa-inteligente-3d",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "node --test test/",
+    "build": "node build.mjs",
+    "voces": "node voices.mjs",
+    "iconos": "node icons.mjs",
+    "publicar": "npm run build && ./deploy.sh"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@fontsource/baloo-2": "^5.1.0",
+    "@fontsource/nunito": "^5.1.0",
+    "esbuild": "^0.24.0",
+    "three": "^0.170.0",
+    "vosk-browser": "^0.0.8"
+  },
+  "devDependencies": {
+    "puppeteer-core": "^23.10.0"
+  }
+}
