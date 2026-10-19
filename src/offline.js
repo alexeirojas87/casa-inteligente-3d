@@ -1,13 +1,18 @@
 // Installs the service worker that keeps the app on the device, and tells
 // the user when everything is saved for use without internet. With internet,
 // every launch checks for a new version and saves only the files that changed.
-export function setupOffline() {
+export function setupOffline({ canReload = () => false } = {}) {
   const el = document.querySelector('#offline');
   const secure = location.protocol === 'https:' || location.hostname === '127.0.0.1' || location.hostname === 'localhost';
   if (!('serviceWorker' in navigator) || !secure) return;
   const sw = navigator.serviceWorker;
   const isUpdate = !!sw.controller;
   sw.register('sw.js').then((reg) => reg.update()).catch((err) => console.error('[offline]', err));
+  // On the iPad, reopening the app often just wakes it up: check again then.
+  document.addEventListener('visibilitychange', async () => {
+    if (document.visibilityState !== 'visible' || !navigator.onLine) return;
+    (await sw.getRegistration())?.update().catch(() => {});
+  });
 
   let hideTimer = null;
   let updated = false;
@@ -22,6 +27,8 @@ export function setupOffline() {
 
   sw.addEventListener('controllerchange', () => {
     if (!isUpdate) return;
+    // Still on the cover: switch to the new version right away.
+    if (canReload()) { location.reload(); return; }
     updated = true;
     show('ready', 'Versión nueva guardada. Cierra y vuelve a abrir la app.');
   });

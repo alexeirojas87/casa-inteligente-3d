@@ -11,7 +11,6 @@ await new Promise((r) => setTimeout(r, 800));
 const browser = await puppeteer.launch({
   executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
   headless: 'new',
-  userDataDir: resolve('.cache/e2e-profile'),
   args: ['--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream', '--enable-unsafe-swiftshader', '--autoplay-policy=no-user-gesture-required'],
   defaultViewport: { width: Number(process.env.W ?? 1440), height: Number(process.env.H ?? 900) },
 });

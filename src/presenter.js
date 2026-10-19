@@ -110,7 +110,7 @@ export function createPresenter(ctx) {
   function renderCover(step) {
     cover.innerHTML = step.thanks
       ? `<p class="cover-eyebrow">La Informática en el Hogar</p><h1>¡Gracias!</h1><p class="cover-crew">${CREW}</p><p class="cover-grade">6to A</p>`
-      : `<p class="cover-eyebrow">Proyecto escolar · 6to A</p><h1>La Informática <span>en el Hogar</span></h1><p class="cover-crew">${CREW}</p><p class="cover-hint">Presiona → para empezar</p>`;
+      : `<p class="cover-eyebrow">Proyecto escolar · 6to A</p><h1>La Informática <span>en el Hogar</span></h1><p class="cover-crew">${CREW}</p><p class="cover-hint">Presiona → para empezar</p><p class="cover-version">versión ${__BUILD__}</p>`;
     cover.classList.remove('is-in');
     void cover.offsetWidth;
     cover.classList.add('is-in');

@@ -386,3 +386,4 @@ body { -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user
   .rotate p::before { content: '⟳'; display: block; font-size: 64px; color: var(--alexa); }
 }
 .story-card { touch-action: pan-y; }
+.cover-version { margin: 8px 0 0; font: 700 12px/1 var(--body); color: var(--muted); opacity: 0.7; }

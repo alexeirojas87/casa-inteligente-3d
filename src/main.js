@@ -528,7 +528,7 @@ const presenter = createPresenter({
 presenter.go(location.hash.includes('demo') ? presenter.demoIndex : 0);
 // Sound only works after the first touch or key press (iPad Safari).
 for (const ev of ['pointerdown', 'keydown', 'touchend']) window.addEventListener(ev, () => sfx.unlock(), { capture: true, passive: true });
-setupOffline();
+setupOffline({ canReload: () => presenter.index === 0 });
 
 // Small hook for automated checks.
 window.__casa = { rooms, robot, devices, runOrder, voice, goTo, presenter };

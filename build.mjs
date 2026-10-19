@@ -19,6 +19,8 @@ await build({
   minify: true,
   target: ['chrome110', 'safari15'],
   outfile: `${OUT}/app.js`,
+  // Shown on the cover so you can tell which version a device is running.
+  define: { __BUILD__: JSON.stringify(new Date().toLocaleString('es', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })) },
 });
 
 cpSync('web/index.html', `${OUT}/index.html`);
