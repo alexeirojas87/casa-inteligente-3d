@@ -89,11 +89,11 @@ const files = walk(OUT)
   .map((f) => relative(OUT, f))
   .filter((f) => !f.endsWith('.command') && !f.endsWith('.txt') && !f.startsWith('.'))
   .sort();
-const hash = createHash('sha1');
-for (const f of files) hash.update(f).update(readFileSync(join(OUT, f)));
+const sha = (data) => createHash('sha1').update(data).digest('hex').slice(0, 12);
+const entries = files.map((f) => [f, sha(readFileSync(join(OUT, f)))]);
 const sw = readFileSync('web/sw.template.js', 'utf8')
-  .replace('__VERSION__', hash.digest('hex').slice(0, 12))
-  .replace('__FILES__', JSON.stringify(files, null, 2));
+  .replace('__VERSION__', sha(JSON.stringify(entries)))
+  .replace('__FILES__', JSON.stringify(entries, null, 2));
 writeFileSync(`${OUT}/sw.js`, sw);
 
 console.log('Built', OUT, `(${files.length} files for offline use)`);

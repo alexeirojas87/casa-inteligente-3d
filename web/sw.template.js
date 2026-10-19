@@ -1,18 +1,21 @@
 // Keeps the whole app on the device so it works without internet.
-// FILES and VERSION are filled in by build.mjs.
+// FILES ([path, hash] pairs) and VERSION are filled in by build.mjs.
 const VERSION = '__VERSION__';
 const FILES = __FILES__;
 const CACHE = `casa-${VERSION}`;
+// The hash in the key lets an update reuse every file that did not change.
+const keyOf = ([file, hash]) => `${file}?v=${hash}`;
 
 self.addEventListener('install', (event) => {
   event.waitUntil((async () => {
     const cache = await caches.open(CACHE);
     // One by one keeps memory low on the iPad (the voice model is large).
-    for (const file of FILES) {
-      if (await cache.match(file)) continue;
-      const res = await fetch(file, { cache: 'reload' });
-      if (!res.ok) throw new Error(`${file}: ${res.status}`);
-      await cache.put(file, res);
+    for (const entry of FILES) {
+      const key = keyOf(entry);
+      if (await cache.match(key)) continue;
+      const res = (await caches.match(key)) ?? (await fetch(key, { cache: 'reload' }));
+      if (!res.ok) throw new Error(`${entry[0]}: ${res.status}`);
+      await cache.put(key, res);
     }
     await self.skipWaiting();
   })());
@@ -34,7 +37,7 @@ self.addEventListener('fetch', (event) => {
     const hit = await cache.match(event.request, { ignoreSearch: true });
     if (hit) return hit;
     if (url.pathname.endsWith('/')) {
-      const index = await cache.match('index.html');
+      const index = await cache.match('index.html', { ignoreSearch: true });
       if (index) return index;
     }
     return fetch(event.request);
@@ -44,6 +47,6 @@ self.addEventListener('fetch', (event) => {
 self.addEventListener('message', async (event) => {
   if (event.data !== 'status') return;
   const cache = await caches.open(CACHE);
-  const have = (await Promise.all(FILES.map((f) => cache.match(f)))).filter(Boolean).length;
-  event.source.postMessage({ type: 'offline-status', have, total: FILES.length });
+  const have = (await Promise.all(FILES.map((e) => cache.match(keyOf(e))))).filter(Boolean).length;
+  event.source.postMessage({ type: 'offline-status', have, total: FILES.length, version: VERSION });
 });
